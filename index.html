@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>加载更多--懒加载</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="css/index.css">
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			var isAjaxLoaded = true;
+			getNews();
+			$(window).on('scroll', checkNews);
+		});
+
+		function checkNews(){
+			var $loadMore = $('.load-more');
+			if(isAjaxLoaded) {
+				if(isInner($loadMore)) {
+					getNews();
+				}
+			}
+		}
+
+		function appendHtml(result) {
+			var html = '';
+			var i;
+			for(i=0; i<result.length;i++){
+				var data = result[i];
+				html += '<li>';
+				html += '<a href="' + data.link + '" class="clearfix">';
+				html += '<div class="thumb">';
+				html += '<img src="' + data.img +'" alt="">';
+				html += '</div>';
+				html += '<h3 class="title">'+ data.title +'</h3>';
+				html += '<p class="brief">'+ data.brif +'</p>';
+				html += '</a>';
+				html += '</li>';
+			}
+
+			$('.news-list').append(html);
+		}
+
+		function getNews() {
+			isAjaxLoaded = false;
+			$.ajax({
+				url: '/static/page1.json',
+				dataType: 'json'
+			}).done(function(result){
+				appendHtml(result);
+				isAjaxLoaded = true;
+				checkNews();
+			}).error(function(){
+				alert('系统错误');
+			});
+		}
+
+		function isInner($node) {
+			var scrollTop = $(window).scrollTop();
+			var windowHeight = $(window).height();
+			var offsetTop = $node.offset().top;
+			var nodeHeight = $node.height();
+			if(offsetTop<scrollTop+windowHeight && nodeHeight+offsetTop>scrollTop){
+				return true;
+			}
+
+			return false;
+		}
+
+
+	</script>
+</head>
+<body>
+	<div class="ct">
+		<ul class="news-list">
+			<!--
+			<li>
+				<a href="http://xw.qq.com/mil/20160830028700/MIL2016083002870002" class="clearfix">
+					<div class="thumb">
+						<img src="http://inews.gtimg.com/newsapp_ls/0/531644649_150120/0" alt="">
+					</div>
+					<h3 class="title">西媒臆断老挝“弃华投美” 认为现政府更亲越南</h3>
+					<p class="brief">西媒臆断老挝“弃华投美” 认为现政府更亲越南</p>
+				</a>
+			</li>
+			<li>
+				<a href="http://xw.qq.com/mil/20160830028700/MIL2016083002870002" class="clearfix">
+					<div class="thumb">
+						<img src="http://inews.gtimg.com/newsapp_ls/0/531644649_150120/0" alt="">
+					</div>
+					<h3 class="title">西媒臆断老挝“弃华投美” 认为现政府更亲越南</h3>
+					<p class="brief">西媒臆断老挝“弃华投美” 认为现政府更亲越南</p>
+				</a>
+			</li>
+		-->
+		</ul>
+		<p class="load-more">加载更多</p>
+	</div>
+	
+</body>
+</html>
