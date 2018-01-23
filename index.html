@@ -43,7 +43,7 @@
 		function getNews() {
 			isAjaxLoaded = false;
 			$.ajax({
-				url: '/static/page1.json',
+				url: './static/page1.json',
 				dataType: 'json'
 			}).done(function(result){
 				appendHtml(result);
